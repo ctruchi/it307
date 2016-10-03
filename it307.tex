@@ -1,0 +1,131 @@
+\documentclass[t,12pt]{beamer}
+%
+% Packages pour le français
+\usepackage[T1]{fontenc} 
+\usepackage[latin1]{inputenc}
+\usepackage[frenchb]{babel}
+%
+% pour un pdf lisible à l'écran
+% il y a d'autres choix possibles 
+\usepackage{pslatex}
+%
+% pour le style et couleurs
+\usetheme{Boadilla}
+%
+% contenu de la page de titre
+\title{Gestion de la Persistance}
+\subtitle{IT307 - ENSEIRB MATMECA}
+\author{Cyril Truchi - Nicolas Philippe}
+\date{2016-2017}
+%
+% Fin du préambule
+%
+
+\begin{document}
+
+\frame{\titlepage}
+
+\section*{Sommaire}
+\begin{frame}
+	\tableofcontents
+\end{frame}
+
+\section{Introduction}
+
+\begin{frame}
+	\frametitle{Organisation du cours}
+
+	Partage du cours avec Nicolas Philippe
+\end{frame}
+
+\begin{frame}
+	\frametitle{Qui suis-je ?}
+	
+	\begin{itemize}
+		\item Cyril Truchi
+			\begin{itemize}
+				\item D\'eveloppeur depuis 2004
+				\item Master GL Bordeaux I en 2009
+				\item Vacataire \`a l'Enseirb depuis 2016
+			\end{itemize}
+		\item Contact
+			\begin{itemize}
+				\item cyril.truchi@4sh.fr
+			\end{itemize}
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Planning}
+
+	\begin{itemize}
+		\item Cyril
+			\begin{description}
+				\item [06 octobre : ] Introduction - Probl\'ematique de persistance d'un SI
+				\item [20 octobre : ] Notions de persistance : Illustration avec JDBC
+				\item [27 octobre : ] JPA avec hibernate - la base
+				\item [03 novembre : ] JPA avec Hibernate - relation et hi\'erarchie
+			\end{description}
+		\item Nicolas
+			\begin{description}
+				\item [10 novembre : ] Introduction \`a NoSQL, Base cl\'e-valeur : Redis
+				\item [24 novembre : ] Base document : MongoDB
+				\item [08 d\'ecembre : ] Base graphe : Neo4j
+				\item [15 d\'ecembre : ] Base colonne : Cassandra
+			\end{description}
+	\end{itemize}
+\end{frame}
+
+
+\section{Persistance}
+\begin{frame}
+	\frametitle{Brainstorm}
+
+	Comment g\'erer la persistance ?
+\end{frame}
+
+\begin{frame}
+	\frametitle{Couches JEE}
+
+	\begin{itemize}
+		\item Pr\'esentation
+		\item Metier
+		\item Persistance
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Data Access Object}
+
+	\begin{block}{Wikipedia}
+		In computer software, a data access object (DAO) is an object that provides an abstract interface to some type of database or other persistence mechanism. By mapping application calls to the persistence layer, DAO provide some specific data operations without exposing details of the database. This isolation supports the Single responsibility principle. It separates what data accesses the application needs, in terms of domain-specific objects and data types (the public interface of the DAO), from how these needs can be satisfied with a specific DBMS, database schema, etc. (the implementation of the DAO).
+	\end{block}
+	\textit{https://en.wikipedia.org/wiki/Data\_access\_object}
+\end{frame}
+
+\section{TPs}
+\begin{frame}
+	\frametitle{TP 1}
+	
+	R\'ealiser la persistance d'une Company en m\'emoire.
+\end{frame}
+
+\begin{frame}
+	\frametitle{Serialisation}
+
+	\begin{itemize}
+		\item Java
+		\item Xml
+		\item Json
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{TP 2}
+	
+	R\'ealiser la persistance d'une Company dans des fichiers.
+
+	Un fichier par Company.
+\end{frame}
+
+\end{document}
