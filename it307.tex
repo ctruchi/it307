@@ -4,6 +4,29 @@
 \usepackage[T1]{fontenc} 
 \usepackage[latin1]{inputenc}
 \usepackage[frenchb]{babel}
+\usepackage{color}
+
+\definecolor{pblue}{rgb}{0.13,0.13,1}
+\definecolor{pgreen}{rgb}{0,0.5,0}
+\definecolor{pred}{rgb}{0.9,0,0}
+\definecolor{pgrey}{rgb}{0.46,0.45,0.48}
+
+\usepackage{listings}
+\lstset{language=Java,
+  showspaces=false,
+  showtabs=false,
+  breaklines=true,
+  showstringspaces=false,
+  breakatwhitespace=true,
+  commentstyle=\color{pgreen},
+  keywordstyle=\color{pblue},
+  stringstyle=\color{pred},
+  basicstyle=\small\ttfamily,
+  columns=flexible,
+  moredelim=[il][\textcolor{pgrey}]{$$},
+  moredelim=[is][\textcolor{pgrey}]{\%\%}{\%\%}
+}
+
 %
 % pour un pdf lisible à l'écran
 % il y a d'autres choix possibles 
@@ -78,10 +101,11 @@
 
 
 \section{Persistance}
+\subsection{Cours}
 \begin{frame}
-	\frametitle{Brainstorm}
+	\frametitle{Sujet}
 
-	Comment g\'erer la persistance ?
+	Qu'entend-on par persistance ?
 \end{frame}
 
 \begin{frame}
@@ -103,29 +127,220 @@
 	\textit{https://en.wikipedia.org/wiki/Data\_access\_object}
 \end{frame}
 
-\section{TPs}
+i\subsection{TP}
 \begin{frame}
-	\frametitle{TP 1}
+	\frametitle{TP}
 	
 	R\'ealiser la persistance d'une Company en m\'emoire.
 \end{frame}
 
+\subsection{Correction}
 \begin{frame}
-	\frametitle{Serialisation}
+	\frametitle{Correction}
 
 	\begin{itemize}
-		\item Java
-		\item Xml
-		\item Json
+		\item Liste
+		\item Map
+	\end{itemize}
+\end{frame}
+
+\section{JDBC}
+\subsection{Cours}
+
+\begin{frame}
+	\frametitle{JDBC}
+
+	\begin{itemize}
+		\item \underline{J}ava \underline{D}ata\underline{b}ase \underline{C}onnectivity
+		\item Acc\`es bas niveau \`a la base de donn\'ees
 	\end{itemize}
 \end{frame}
 
 \begin{frame}
-	\frametitle{TP 2}
-	
-	R\'ealiser la persistance d'une Company dans des fichiers.
+	\frametitle{Relationnel : Avantages}
 
-	Un fichier par Company.
+	\begin{itemize}
+		\item Syst\`eme de requ\^etes tr\`es puissant
+		\item Standardis\'ee (JDK 1.1)
+		\item Excellente interop\'erabilit\'e
+		\item Support transactionnelle en respectant les propri\'et\'es ACID
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{ACID}
+
+	\begin{description}
+		\item \underline{\textbf{A}}tomicity : Tout ou rien
+		\item \underline{\textbf{C}}onsistency : Respect des contraintes
+		\item \underline{\textbf{I}}solation : Transactions ind\'ependantes
+		\item \underline{\textbf{D}}urability : Conservation des donn\'ees
+	\end{description}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Relationnel : Inconv\'enients}
+
+	\begin{itemize}
+		\item Scalabilit\'e limit\'ee
+		\item Mapping Objet/Relationnel difficile
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{JDBC : Concepts}
+
+	\begin{itemize}
+		\item Driver
+		\item Connection/Datasource
+		\item Statement/PreparedStatement
+		\item ResultSet
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Driver}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Connection/Datasource}
+
+	Datasource permet de d\'eleguer la cr\'eation des connections
+\end{frame}
+
+\begin{frame}
+	\frametitle{Statement/PreparedStatement}
+
+	\begin{enumerate}
+		\item Parse the incoming SQL query 
+		\item Compile the SQL query
+		\item Plan/optimize the data acquisition path
+		\item Execute the optimized query / acquire and return data 
+	\end{enumerate}
+\end{frame}
+
+\begin{frame}
+	\frametitle{ResultSet}
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{JDBC - Query}
+
+	\begin{lstlisting}[frame=single]
+Connection connection = dataSource.getConnection();
+Statement statement = connection.createStatement();
+ResultSet resultSet = statement.executeQuery("select * from MA_TABLE");
+
+while (resultSet.next()) {
+    String name = resultSet.getString("name");
+    doSomethingWithName(name);
+}
+	\end{lstlisting}
+
+	\begin{alertblock}{Attention}
+		Il manque la gestion des erreurs, des transactions et la fermeture des ressources.
+	\end{alertblock}
+\end{frame}
+
+\begin{frame}
+	\frametitle{JDBC - Outil de plus haut niveau}
+	
+	\begin{itemize}
+		\item Gestion des erreurs
+		\item Gestion de la fermeture des ressources
+		\item Concept de mapper
+		\item Ex : 
+			\begin{itemize}
+				\item Spring jdbc template
+				\item Apache Commons DB
+				\item MyBatis
+				\item jDBI
+			\end{itemize}
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{JDBI}
+
+	\begin{itemize}
+		\item Open Source
+		\item Compact
+		\item Facile d'acc\'es
+		\item Actif
+	\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{jDBI - Query}
+
+	\begin{lstlisting}[frame=single]
+private void doSomething() {
+    try (Handle handle = dbi.open()) {
+        List<MonObjet> mesObjets =
+                handle.createQuery("SELECT * FROM MA_TABLE WHERE id = :monId")
+                       .bind("monId", 1)
+                       .map(MA_TABLE_MAPPER)
+                       .list();
+    }
+}
+	\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{jDBI - Mapper}
+
+	\begin{lstlisting}[frame=single]
+private static final ResultSetMapper<MonObjet> MA_TABLE_MAPPER =
+        new ResultSetMapper<MonObjet>() {
+            @Override
+            public MonObjet map(int index,
+                                ResultSet rs,
+                                StatementContext ctx)
+                    throws SQLException {
+                MonObjet monObjet = new MonObjet();
+                monObjet.setName(rs.getString("name"));
+                return monObjet;
+            }
+        };
+	\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{jDBI - Statements}
+
+	\begin{lstlisting}[frame=single]
+private void doSomething() {
+    try (Handle handle = dbi.open()) {
+        handle.createStatement("insert into MA_TABLE(name) values(:name)")
+              .bind("name", "Cyril")
+              .execute();
+    }
+}
+	\end{lstlisting}
+\end{frame}
+
+\begin{frame}
+	\frametitle{R\'ef\'erences}
+
+	\begin{itemize}
+		\item \url{http://jdbi.org/}
+		\item \url{http://www.h2database.com}
+	\end{itemize}
+\end{frame}
+
+\subsection{TP}
+
+\begin{frame}
+	\frametitle{TP}
+
+	\begin{block}{R\'ealiser la persistance d'une Company avec jDBI sur la base H2 (base embarqu\'ee)}
+		\begin{itemize}
+			\item Impl\'ementer la classe \lstinline{JdbcCompanyRepository}
+			\item Utiliser la propri\'et\'e \lstinline{dbi} inject\'ee via RestX
+			\item La table est cr\'ee : regarder la classe \lstinline{DbiModule}
+			\item \url{http://goo.gl/ekskDo}
+		\end{itemize}
+	\end{block}
 \end{frame}
 
 \end{document}
