@@ -33,7 +33,12 @@
 \usepackage{pslatex}
 %
 % pour le style et couleurs
-\usetheme{Boadilla}
+\usetheme[secheader]{Boadilla}
+\setbeamertemplate{itemize items}[circle]
+\setbeamertemplate{enumerate items}[circle]
+\setbeamertemplate{section in toc}[circle]
+\setbeamertemplate{subsection in toc}[default]
+
 %
 % contenu de la page de titre
 \title{Gestion de la Persistance}
@@ -215,6 +220,7 @@ i\subsection{TP}
 		\item Parse the incoming SQL query 
 		\item Compile the SQL query
 		\item Plan/optimize the data acquisition path
+		\setbeamercolor{item projected}{bg=red}
 		\item Execute the optimized query / acquire and return data 
 	\end{enumerate}
 \end{frame}
