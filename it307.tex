@@ -23,6 +23,7 @@
   stringstyle=\color{pred},
   basicstyle=\small\ttfamily,
   columns=flexible,
+  escapeinside=||,
   moredelim=[il][\textcolor{pgrey}]{$$},
   moredelim=[is][\textcolor{pgrey}]{\%\%}{\%\%}
 }
@@ -43,7 +44,7 @@
 % contenu de la page de titre
 \title{Gestion de la Persistance}
 \subtitle{IT307 - ENSEIRB MATMECA}
-\author{Cyril Truchi - Nicolas Philippe}
+\author{Cyril Truchi}
 \date{2016-2017}
 %
 % Fin du préambule
@@ -105,7 +106,13 @@
 \end{frame}
 
 
+
 \section{Persistance}
+
+\begin{frame}
+	\tableofcontents[currentsection]
+\end{frame}
+
 \subsection{Cours}
 \begin{frame}
 	\frametitle{Sujet}
@@ -129,7 +136,7 @@
 	\begin{block}{Wikipedia}
 		In computer software, a data access object (DAO) is an object that provides an abstract interface to some type of database or other persistence mechanism. By mapping application calls to the persistence layer, DAO provide some specific data operations without exposing details of the database. This isolation supports the Single responsibility principle. It separates what data accesses the application needs, in terms of domain-specific objects and data types (the public interface of the DAO), from how these needs can be satisfied with a specific DBMS, database schema, etc. (the implementation of the DAO).
 	\end{block}
-	\textit{https://en.wikipedia.org/wiki/Data\_access\_object}
+	\url{https://en.wikipedia.org/wiki/Data\_access\_object}
 \end{frame}
 
 i\subsection{TP}
@@ -150,6 +157,11 @@ i\subsection{TP}
 \end{frame}
 
 \section{JDBC}
+
+\begin{frame}
+	\tableofcontents[currentsection]
+\end{frame}
+
 \subsection{Cours}
 
 \begin{frame}
@@ -346,6 +358,268 @@ private void doSomething() {
 			\item La table est cr\'ee : regarder la classe \lstinline{DbiModule}
 			\item \url{http://goo.gl/ekskDo}
 			\item \lstinline{-Dpersistence=jdbc}
+		\end{itemize}
+	\end{block}
+\end{frame}
+
+\subsection{Correction}
+\begin{frame}
+	\frametitle{Correction}
+	\begin{itemize}
+		\item Liste
+		\item Map
+	\end{itemize}
+\end{frame}
+
+\section{JPA}
+
+\begin{frame}
+	\tableofcontents[currentsection]
+\end{frame}
+
+\subsection{Cours}
+
+\begin{frame}
+	\frametitle{Mapping Objet Relationnel}
+
+	\begin{block}{Wikipedia}
+		Un mapping objet-relationnel (en anglais object-relational mapping ou ORM) est une technique de programmation informatique qui cr\'ee l'illusion d'une base de donn\'ees orient\'ee objet \`a partir d'une base de donn\'ees relationnelle en d\'efinissant des correspondances entre cette base de donn\'ees et les objets du langage utilis\'e. On pourrait le d\'esigner par "correspondance entre monde objet et monde relationnel".
+	\end{block}
+	\url{https://fr.wikipedia.org/wiki/Mapping_objet-relationnel}
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Contraintes sur le mod\`ele objet}
+
+	\begin{alertblock}{Obligatoire}
+		\begin{itemize}
+			\item Constructeur sans argument
+		\end{itemize}
+	\end{alertblock}
+
+	\begin{block}{Recommand\'e}
+		\begin{itemize}
+			\item Acc\`es aux propri\'et\'es mapp\'ees par getter/setter
+			\item Classes non finales
+			\item Propri\'et\'e servant d'identifiant
+		\end{itemize}
+	\end{block}
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{Exemple}
+
+	\begin{lstlisting}[frame=single, basicstyle=\tiny]
+public class Event {
+
+    private Long id;
+    |\pause|private String title;
+    private Contact contact;
+
+    |\pause|public Event() {
+    }
+
+    |\pause|public Long getId() {
+        return id;
+    }
+    private void setId(Long id) {
+        this.id = id;
+    }
+    public String getTitle() {
+        return title;
+    }
+    public void setTitle(String title) {
+        this.title = title;
+    }
+    public Contact getContact() {
+        return contact;
+    }
+    public void setContact(Contact contact) {
+        this.contact = contact;
+    }
+}
+	\end{lstlisting}
+\end{frame}
+
+\begin{frame}
+	\frametitle{D\'eclaration du mapping}
+
+	\begin{itemize}
+		\item Fichier de mapping (hbm.xml ou orm.xml)
+			\begin{itemize}
+				\item Isolation mapping et classe
+			\end{itemize}
+		\item Annotations
+			\begin{itemize}
+				\item Facile d'usage
+				\item Maintenance plus facile
+			\end{itemize}
+	\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{Exemple avec annotations}
+
+	\begin{lstlisting}[frame=single]
+import javax.persistence.Entity;
+import javax.persistence.Id;
+
+@Entity
+public class Event {
+
+    @Id
+    private Long id;
+    private String title;
+    private Contact contact;
+}
+	\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{Champ embarqu\'e}
+
+	\begin{lstlisting}[frame=single]
+import javax.persistence.Entity;
+import javax.persistence.Id;
+
+@Entity
+public class Event {
+
+    @Id
+    private Long id;
+    private String title;
+    @Embedded
+    private Contact contact;
+
+    ...
+}
+	\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{Champ embarqu\'e}
+
+	\begin{lstlisting}[frame=single]
+import javax.persistence.Embeddable;
+
+@Embeddable
+public class Contact {
+
+    private String firstName;
+    private String lastName;
+}
+	\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{EntityManager}
+
+	\begin{itemize}
+		\item Point d'acc\'s sur la base mapp\'ee
+		\item Inject\'e dans les composants JavaEE
+	\end{itemize}
+
+	\begin{lstlisting}[frame=none]
+    @PersistenceContext
+    private EntityManager em;
+	\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{EntityManager}
+
+	\begin{itemize}
+		\item Hors JavaEE
+	\end{itemize}
+
+	\begin{lstlisting}[frame=none]
+    EntityManagerFactory emf = ...;
+    EntityManager em = emf.createEntityManager();
+
+    try {
+        em.getTransaction().begin();
+        doSomethingWithEm(em);
+    } finally {
+        em.getTransaction().commit();
+        em.close();
+    }
+	\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{Requ\^etes}
+
+	\begin{block}{JPQL}
+		\begin{lstlisting}[frame=none]
+em.createQuery("select c from Company c", Company.class)
+  .getResultList()
+		\end{lstlisting}
+	\end{block}
+
+	\begin{exampleblock}{Alternative}
+		\begin{lstlisting}[frame=none]
+em.createQuery("from Company c", Company.class)
+  .getResultList()
+		\end{lstlisting}
+	\end{exampleblock}
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{Requ\^ete par id}
+
+	\begin{lstlisting}[frame=none]
+    em.find(Event.class, id);
+	\end{lstlisting}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Stockage}
+
+	\begin{exampleblock}{Cr\'eation}
+		\lstinline{em.create(event);}
+	\end{exampleblock}
+
+	\begin{block}{Modification}
+		\lstinline{em.merge(event);}
+	\end{block}
+
+	\begin{alertblock}{Suppression}
+		\lstinline{em.delete(event);}
+	\end{alertblock}
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{G\'en\'eration d'Id}
+
+	\begin{block}{Automatique}
+		\begin{lstlisting}[frame=none]
+@Id
+@GeneratedValue(strategy = AUTO)
+private long id;
+		\end{lstlisting}
+	\end{block}
+
+	\begin{alertblock}{Attention}
+		D\'ependant de la base de donn\'ees.
+
+		Pour une persistance polyglotte, on pr\'ef\'erera les UUID.
+	\end{alertblock}
+\end{frame}
+
+\subsection{TP}
+
+\begin{frame}
+	\frametitle{TP}
+
+	\begin{block}{R\'ealiser la persistance d'une Company avec Hibernate (JPA) sur la base H2 (base embarqu\'ee)}
+		\begin{itemize}
+			\item Annoter la class \lstinline{Company}
+			\item Impl\'ementer la classe \lstinline{JpaCompanyRepository}
+			\item Utiliser la propri\'et\'e \lstinline{emf} inject\'ee via RestX
+			\item La table est cr\'ee automatiquement par hibernate
+			\item \url{http://goo.gl/ekskDo}
+			\item \lstinline{-Dpersistence=jpa}
 		\end{itemize}
 	\end{block}
 \end{frame}
