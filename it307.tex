@@ -554,14 +554,14 @@ public class Contact {
 
 	\begin{block}{JPQL}
 		\begin{lstlisting}[frame=none]
-em.createQuery("select c from Company c", Company.class)
+em.createQuery("select e from Event c", Event.class)
   .getResultList()
 		\end{lstlisting}
 	\end{block}
 
 	\begin{exampleblock}{Alternative}
 		\begin{lstlisting}[frame=none]
-em.createQuery("from Company c", Company.class)
+em.createQuery("from Event e", Event.class)
   .getResultList()
 		\end{lstlisting}
 	\end{exampleblock}
