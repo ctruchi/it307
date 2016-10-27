@@ -365,10 +365,6 @@ private void doSomething() {
 \subsection{Correction}
 \begin{frame}
 	\frametitle{Correction}
-	\begin{itemize}
-		\item Liste
-		\item Map
-	\end{itemize}
 \end{frame}
 
 \section{JPA}
@@ -378,6 +374,12 @@ private void doSomething() {
 \end{frame}
 
 \subsection{Cours}
+
+\begin{frame}
+	\frametitle{JPA}
+
+	\underline{J}ava \underline{P}ersistence \underline{A}PI
+\end{frame}
 
 \begin{frame}
 	\frametitle{Mapping Objet Relationnel}
@@ -413,17 +415,17 @@ private void doSomething() {
 	\begin{lstlisting}[frame=single, basicstyle=\tiny]
 public class Event {
 
-    private Long id;
+    private Long id;	//Identifiant
     |\pause|private String title;
     private Contact contact;
 
-    |\pause|public Event() {
+    |\pause|public Event() {	//Constructeur sans argument
     }
 
-    |\pause|public Long getId() {
+    |\pause|public Long getId() {	//Getter
         return id;
     }
-    private void setId(Long id) {
+    private void setId(Long id) {	//Setter
         this.id = id;
     }
     public String getTitle() {
@@ -516,7 +518,7 @@ public class Contact {
 	\frametitle{EntityManager}
 
 	\begin{itemize}
-		\item Point d'acc\'s sur la base mapp\'ee
+		\item Point d'acc\'es sur la base mapp\'ee
 		\item Inject\'e dans les composants JavaEE
 	\end{itemize}
 
@@ -603,7 +605,7 @@ private long id;
 	\begin{alertblock}{Attention}
 		D\'ependant de la base de donn\'ees.
 
-		Pour une persistance polyglotte, on pr\'ef\'erera les UUID.
+		Pour une persistance polyglotte, on pr\'ef\`erera les UUID.
 	\end{alertblock}
 \end{frame}
 
