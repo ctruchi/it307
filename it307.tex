@@ -808,6 +808,8 @@ public class Car {
 	\frametitle{H\'eritage : exemple}
 
 	\begin{lstlisting}
+@Entity
+@Inheritance
 public class Vehicle {
     private String license;
 }
@@ -816,6 +818,7 @@ public class Vehicle {
 	\begin{columns}
 		\begin{column}{0.5\textwidth}
 			\begin{lstlisting}
+@Entity
 public class Car
           extends Vehicle {
     private String nbOfSeats;
@@ -825,6 +828,7 @@ public class Car
 		\vrule{}
 		\begin{column}{0.5\textwidth}
 			\begin{lstlisting}
+@Entity
 public class Truck
           extends Vehicle {
     private String tonnage;
