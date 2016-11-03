@@ -90,17 +90,17 @@
 	\begin{itemize}
 		\item Cyril
 			\begin{description}
-				\item [06 octobre : ] Introduction - Probl\'ematique de persistance d'un SI
-				\item [20 octobre : ] Notions de persistance : Illustration avec JDBC
-				\item [27 octobre : ] JPA avec hibernate - la base
-				\item [03 novembre : ] JPA avec Hibernate - relation et hi\'erarchie
+				\item [06 octobre :] Introduction - Probl\'ematique de persistance d'un SI
+				\item [20 octobre :] Notions de persistance : Illustration avec JDBC
+				\item [27 octobre :] JPA avec hibernate - la base
+				\item [03 novembre :] JPA avec Hibernate - relation et hi\'erarchie
 			\end{description}
 		\item Nicolas
 			\begin{description}
-				\item [10 novembre : ] Introduction \`a NoSQL, Base cl\'e-valeur : Redis
-				\item [24 novembre : ] Base document : MongoDB
-				\item [08 d\'ecembre : ] Base graphe : Neo4j
-				\item [15 d\'ecembre : ] Base colonne : Cassandra
+				\item [10 novembre :] Introduction \`a NoSQL, Base cl\'e-valeur : Redis
+				\item [24 novembre :] Base document : MongoDB
+				\item [08 d\'ecembre :] Base graphe : Neo4j
+				\item [15 d\'ecembre :] Base colonne : Cassandra
 			\end{description}
 	\end{itemize}
 \end{frame}
@@ -622,6 +622,357 @@ private long id;
 			\item La table est cr\'ee automatiquement par hibernate
 			\item \url{http://goo.gl/ekskDo}
 			\item \lstinline{-Dpersistence=jpa}
+		\end{itemize}
+	\end{block}
+\end{frame}
+
+\subsection{Correction}
+\begin{frame}
+	\frametitle{Correction}
+\end{frame}
+
+\section{JPA - Avanc\'e}
+
+\begin{frame}
+	\frametitle{SQL natif}
+
+	\begin{alertblock}{A \'eviter}
+		\lstinline{em.createNativeQuery("select * from EVENT").getResultList()}
+	\end{alertblock}
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{Relations}
+
+	Un \lstinline{Dealership} a plusieurs \lstinline{Car}.
+
+	\begin{columns}
+		\begin{column}{0.45\textwidth}
+			\onslide<2>{\textbf{OneToMany}}
+			\begin{lstlisting}[frame=none]
+public class Dealership {
+
+    private String name;|\onslide<2>|
+    @OneToMany
+    private List<Car> cars;|\onslide<1->|
+
+}
+			\end{lstlisting}
+		\end{column}
+		\vrule{}
+		\begin{column}{0.55\textwidth}
+			\onslide<3>{\textbf{ManyToOne}}
+			\begin{lstlisting}[frame=none]
+public class Car {
+
+    private String brand;
+    private String model;|\onslide<3>|
+    private String license;
+    @ManyToOne
+    private Dealership dealership;|\onslide<1->|
+
+}
+			\end{lstlisting}
+		\end{column}
+	\end{columns}
+
+\end{frame}
+
+\begin{frame}[t]
+	\frametitle{Relations}
+
+	\begin{table}
+		\caption{DEALERSHIP}
+		\begin{tabular}{l | c}
+			ID & NAME \\
+			\hline
+			1 & Peugeot M\'erignac \\
+			2 & Citro\"en Le Bouscat
+		\end{tabular}
+	\end{table}
+
+	\begin{table}
+		\caption{CAR}
+		\begin{tabular}{l | c | c | c | c}
+			ID & BRAND & MODEL & LICENSE & DEALERSHIP\_ID \\
+			\hline
+			1 & Peugeot & 308 & AC-613-ET & 1 \\
+			2 & Renault & Clio & LK-158-FM  & 1 \\
+			3 & Citro\"en & C4 &  RJ-423-LE & 2
+		\end{tabular}
+	\end{table}
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{Relations}
+
+	Un \lstinline{Dealership} a plusieurs \lstinline{Car}.
+
+	\begin{alertblock}{A \'eviter}
+		\begin{columns}
+			\begin{column}{0.45\textwidth}
+				\begin{lstlisting}[frame=none]
+ public class Dealership {
+
+     private String name;
+     |\textbf{@OneToMany}|
+     private List<Car> cars;
+
+ }
+				\end{lstlisting}
+			\end{column}
+			\vrule{}
+			\begin{column}{0.55\textwidth}
+				\begin{lstlisting}[frame=none]
+public class Car {
+
+    private String brand;
+    private String model;
+    private String license;
+    |\textbf{@ManyToOne}|
+    private Dealership dealership;
+
+}
+				\end{lstlisting}
+			\end{column}
+		\end{columns}
+	\end{alertblock}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Diff\'erentes relations}
+
+	\begin{description}[ManyToMany :]
+		\item[OneToMany :] Concessionnaire <-> Voiture
+		\item[ManyToOne :] Voiture <-> Concessionnaire
+		\item[OneToOne :] Personne <-> Dossier M\'edical
+		\item[ManyToMany :] Personne <-> Adresse
+	\end{description}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Relations - Chargement}
+
+	\begin{description}
+		\item[EAGER :] Au chargement de l'entit\'e
+		\item[LAZY :] A la demande
+	\end{description}
+
+	\begin{block}{Par d\'efaut}
+		\begin{description}[ManyToMany :]
+			\item[OneToMany :] Lazy
+			\item[ManyToOne :] Eager
+			\item[OneToOne :] Eager
+			\item[ManyToMany :] Lazy
+		\end{description}
+	\end{block}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Relations - Chargement \`a la demande}
+
+	\textbf{Lazy Loading}
+
+	\begin{block}{JQL}
+		\lstinline{from Dealership dsp inner join fetch dsp.cars}
+	\end{block}
+
+
+	\begin{block}{Java}
+		\lstinline{Dealership dealership = findDealershipById(1);}
+		\lstinline{Hibernate.initialize(dealership.cars);}
+	\end{block}
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Cascade}
+
+	\lstinline{@OneToMany(cascade=\{CascadeType.PERSIST, CascadeType.REMOVE\})}
+\end{frame}
+
+\begin{frame}
+	\frametitle{H\'eritage}
+
+	\begin{block}{3 solutions}
+		\begin{description}[TABLE\_PER\_CLASS :]
+			\item<2->[SINGLE\_TABLE :] Une seule table
+			\item<3->[TABLE\_PER\_CLASS :] Une table par classe
+			\item<4->[JOINED :] Jointures
+		\end{description}
+	\end{block}
+	\pause
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{H\'eritage : exemple}
+
+	\begin{lstlisting}
+public class Vehicle {
+    private String license;
+}
+	\end{lstlisting}
+
+	\begin{columns}
+		\begin{column}{0.5\textwidth}
+			\begin{lstlisting}
+public class Car
+          extends Vehicle {
+    private String nbOfSeats;
+}
+			\end{lstlisting}
+		\end{column}
+		\vrule{}
+		\begin{column}{0.5\textwidth}
+			\begin{lstlisting}
+public class Truck
+          extends Vehicle {
+    private String tonnage;
+}
+			\end{lstlisting}
+		\end{column}
+	\end{columns}
+\end{frame}
+
+\begin{frame}
+	\frametitle{H\'eritage : SINGLE\_TABLE}
+
+	\begin{table}
+		\caption{VEHICLE}
+		\begin{tabular}{l | c | c | c | c}
+			DTYPE & ID & LICENSE & NB\_OF\_SEATS & TONNAGE \\
+			\hline
+			Car & 1 & 243AT532 & 5 & null \\
+			Truck & 2 & 744LG230 & null & 19
+		\end{tabular}
+	\end{table}
+\end{frame}
+
+\begin{frame}
+	\frametitle{H\'eritage : SINGLE\_TABLE}
+
+	\begin{exampleblock}{Avantages}
+		\begin{itemize}
+			\item Simple
+			\item Performant
+			\item Polymorphisme
+		\end{itemize}
+	\end{exampleblock}
+
+	\begin{alertblock}{Inconv\'enients}
+		\begin{itemize}
+			\item Normalisation
+			\item Pas de contrainte \lstinline{NOT NULL}
+		\end{itemize}
+	\end{alertblock}
+\end{frame}
+
+\begin{frame}
+	\frametitle{H\'eritage : TABLE\_PER\_CLASS}
+
+	\begin{table}
+		\caption{CAR}
+		\begin{tabular}{l | c | c}
+			ID & LICENSE & NB\_OF\_SEATS \\
+			\hline
+			1 & 243AT532 & 5
+		\end{tabular}
+	\end{table}
+	
+	\begin{table}
+		\caption{TRUCK}
+		\begin{tabular}{l | c | c}
+			ID & LICENSE & TONNAGE \\
+			\hline
+			1 & 744LG230 & 19
+		\end{tabular}
+	\end{table}
+\end{frame}
+
+\begin{frame}
+	\frametitle{H\'eritage : TABLE\_PER\_CLASS}
+
+	\begin{exampleblock}{Avantages}
+		\begin{itemize}
+			\item Contraintes \lstinline{NOT NULL}
+		\end{itemize}
+	\end{exampleblock}
+
+	\begin{alertblock}{Inconv\'enients}
+		\begin{itemize}
+			\item Polymorphisme
+			\item Normalisation
+			\item Id
+		\end{itemize}
+	\end{alertblock}
+\end{frame}
+
+\begin{frame}
+	\frametitle{H\'eritage : JOINED}
+
+	\begin{table}
+		\caption{VEHICLE}
+		\begin{tabular}{l | c}
+			ID & LICENSE \\
+			\hline
+			1 & 243AT532 \\
+			2 & 744LG230 \\
+		\end{tabular}
+	\end{table}
+
+	\begin{columns}
+		\begin{column}{0.5\textwidth}
+			\begin{table}
+				\caption{CAR}
+				\begin{tabular}{l | c }
+					NB\_OF\_SEATS & VEHICLE\_ID \\
+					\hline
+					5 & 1
+				\end{tabular}
+		\end{table}
+	\end{column}
+
+		\begin{column}{0.5\textwidth}
+			\begin{table}
+				\caption{TRUCK}
+				\begin{tabular}{l | c}
+				TONNNAGE & VEHICLE\_ID \\
+				\hline
+				19 & 2
+				\end{tabular}
+			\end{table}
+		\end{column}
+	\end{columns}
+\end{frame}
+
+\begin{frame}
+	\frametitle{H\'eritage : SINGLE\_TABLE}
+
+	\begin{exampleblock}{Avantages}
+		\begin{itemize}
+			\item Normalisation
+			\item Contrainte \lstinline{NOT NULL}
+			\item Polymorphisme
+		\end{itemize}
+	\end{exampleblock}
+
+	\begin{alertblock}{Inconv\'enients}
+		\begin{itemize}
+			\item Performance
+		\end{itemize}
+	\end{alertblock}
+\end{frame}
+
+\section{Projet}
+
+\begin{frame}
+	\frametitle{Projet}
+
+	\begin{block}{}
+		\begin{itemize}
+			\item 
+			\item A rendre pour le 20 d\'ecembre
+			\item Google groups : enseirb\_it307
 		\end{itemize}
 	\end{block}
 \end{frame}
